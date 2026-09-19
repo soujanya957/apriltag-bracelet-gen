@@ -1,0 +1,9 @@
+{
+  "x_cut_left": 0.5,
+  "x_cut_right": 7.5,
+  "spine_y_min": -12.0,
+  "spine_y_max": 12.0,
+  "spine_z_min": -6.0,
+  "spine_z_max": 0.0,
+  "solid_index": 0
+}
