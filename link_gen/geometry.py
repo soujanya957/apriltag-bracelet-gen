@@ -54,6 +54,7 @@ class CarrierProfile:
     spine_z_min: float
     spine_z_max: float    # top of the spine -- tag pockets are cut down from here
     solid_index: int = 0  # which Solids()[i] in the STEP file is the link
+    tag_face: str = "z_max"  # which spine face is outward once assembled: z_max | z_min
 
     @classmethod
     def from_json(cls, path: str | pathlib.Path) -> "CarrierProfile":
@@ -100,6 +101,7 @@ def build_tag_link(
     tag_size_mm: float,
     extra_length_mm: float,
     pocket_depth_mm: float = 0.4,
+    tag_face: str = "z_max",
 ) -> tuple[Solid, Solid]:
     """
     Returns (body_solid, insert_solid).
@@ -108,7 +110,17 @@ def build_tag_link(
     built-in white quiet zone) -- it must fit within
     profile.spine_len + extra_length_mm, and within profile.spine_width,
     or this raises ValueError.
+
+    tag_face: "z_max" (default) cuts the tag into the spine's top face
+    (profile.spine_z_max); "z_min" cuts it into the bottom face instead
+    (profile.spine_z_min). Which one is physically "outward" once links
+    are snapped into a curved bracelet depends on your carrier's local
+    axes and hinge direction -- if a printed link comes out with the tag
+    facing inward/downward, this is the one setting to flip. It doesn't
+    change x_cut_left/x_cut_right or anything about the joint ends.
     """
+    if tag_face not in ("z_max", "z_min"):
+        raise ValueError(f"tag_face must be 'z_max' or 'z_min', got {tag_face!r}")
     new_spine_len = profile.spine_len + extra_length_mm
     if tag_size_mm > new_spine_len or tag_size_mm > profile.spine_width:
         raise ValueError(
@@ -137,7 +149,12 @@ def build_tag_link(
     spine_center_x = profile.x_cut_left + new_spine_len / 2.0
     x0 = spine_center_x - tag_size_mm / 2.0
     y0 = -tag_size_mm / 2.0
-    z_top = profile.spine_z_max
+    if tag_face == "z_max":
+        pocket_z = profile.spine_z_max - pocket_depth_mm - 0.01
+        insert_z = profile.spine_z_max - pocket_depth_mm
+    else:
+        pocket_z = profile.spine_z_min - 0.01
+        insert_z = profile.spine_z_min
 
     pocket_boxes, insert_boxes = [], []
     for row in range(n):
@@ -145,14 +162,18 @@ def build_tag_link(
             if not grid[row, col]:
                 continue
             px = x0 + col * module
-            py = y0 + row * module
+            # PNG row 0 is the top of the image. Looking at the z_max face
+            # from +Z, +Y is up, so rows must be flipped or the tag comes out
+            # mirrored; looking at the z_min face from -Z, +Y is down, so
+            # rows map straight through.
+            py = y0 + ((n - 1 - row) if tag_face == "z_max" else row) * module
             pocket_boxes.append(
                 Solid.makeBox(module, module, pocket_depth_mm + 0.02,
-                               Vector(px, py, z_top - pocket_depth_mm - 0.01))
+                               Vector(px, py, pocket_z))
             )
             insert_boxes.append(
                 Solid.makeBox(module, module, pocket_depth_mm,
-                               Vector(px, py, z_top - pocket_depth_mm))
+                               Vector(px, py, insert_z))
             )
 
     if not pocket_boxes:

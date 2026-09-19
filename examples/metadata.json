@@ -1,0 +1,301 @@
+{
+  "schema": "apriltag-bracelet-gen/metadata/1",
+  "generated_at": "2026-09-19T04:01:16+00:00",
+  "generator": {
+    "repo": "apriltag-bracelet-gen",
+    "git_commit": "4b48a80",
+    "command": "python3 -m link_gen.cli generate --carrier carriers/chainlink_v10.step --profile carriers/chainlink_v10.profile.json --family tag36h11 --wrist both"
+  },
+  "wrist": "left",
+  "carrier": {
+    "step_file": "chainlink_v10.step",
+    "profile_file": "chainlink_v10.profile.json",
+    "profile": {
+      "x_cut_left": 0.5,
+      "x_cut_right": 7.5,
+      "spine_y_min": -12.0,
+      "spine_y_max": 12.0,
+      "spine_z_min": -6.0,
+      "spine_z_max": 0.0,
+      "solid_index": 0,
+      "tag_face": "z_min"
+    },
+    "spacer_file": "../spacer_chainlink_v10.stl"
+  },
+  "link_geometry_mm": {
+    "tag_footprint": 16.0,
+    "module": 1.6,
+    "modules_per_side": 10,
+    "extra_length": 11.0,
+    "pocket_depth": 0.4,
+    "spine_length_new": 18.0,
+    "tag_face": "z_min"
+  },
+  "detection": {
+    "family": "tag36h11",
+    "tag_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "pose_tag_size_mm": 12.8,
+    "pose_tag_size_note": "Side length of the black border square (outer edge), which is the quad the detector returns corners for. Pass THIS -- not the 16.0mm footprint -- as tag_size / markerLength for pose estimation. Measure a printed link with calipers to confirm; FDM shrinkage can change it by ~0.1mm.",
+    "quiet_zone_modules": 1,
+    "opencv_aruco_dict": "DICT_APRILTAG_36h11",
+    "examples": {
+      "pupil_apriltags": "Detector(families='tag36h11').detect(gray, estimate_tag_pose=True, camera_params=(fx, fy, cx, cy), tag_size=0.0128)  # metres",
+      "apriltag_ros": {
+        "tag_family": "tag36h11",
+        "standalone_tags": [
+          {
+            "id": 0,
+            "size": 0.0128
+          },
+          {
+            "id": 1,
+            "size": 0.0128
+          },
+          {
+            "id": 2,
+            "size": 0.0128
+          },
+          {
+            "id": 3,
+            "size": 0.0128
+          },
+          {
+            "id": 4,
+            "size": 0.0128
+          },
+          {
+            "id": 5,
+            "size": 0.0128
+          },
+          {
+            "id": 6,
+            "size": 0.0128
+          },
+          {
+            "id": 7,
+            "size": 0.0128
+          }
+        ]
+      },
+      "opencv_aruco": "cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_APRILTAG_36h11); markerLength=0.0128"
+    }
+  },
+  "tags": [
+    {
+      "id": 0,
+      "body_file": "link_tag36h11_000_body.stl",
+      "insert_file": "link_tag36h11_000_insert.stl",
+      "bitmap": [
+        "..........",
+        ".########.",
+        ".#..#.#.#.",
+        ".##...#.#.",
+        ".##..####.",
+        ".#.#.####.",
+        ".##.#..##.",
+        ".####.###.",
+        ".########.",
+        ".........."
+      ]
+    },
+    {
+      "id": 1,
+      "body_file": "link_tag36h11_001_body.stl",
+      "insert_file": "link_tag36h11_001_insert.stl",
+      "bitmap": [
+        "..........",
+        ".########.",
+        ".#..#..##.",
+        ".##.#...#.",
+        ".#....###.",
+        ".##..####.",
+        ".#.#..#.#.",
+        ".###.##.#.",
+        ".########.",
+        ".........."
+      ]
+    },
+    {
+      "id": 2,
+      "body_file": "link_tag36h11_002_body.stl",
+      "insert_file": "link_tag36h11_002_insert.stl",
+      "bitmap": [
+        "..........",
+        ".########.",
+        ".#..#...#.",
+        ".##.##.##.",
+        ".#.######.",
+        ".###.##.#.",
+        ".####.###.",
+        ".###...##.",
+        ".########.",
+        ".........."
+      ]
+    },
+    {
+      "id": 3,
+      "body_file": "link_tag36h11_003_body.stl",
+      "insert_file": "link_tag36h11_003_insert.stl",
+      "bitmap": [
+        "..........",
+        ".########.",
+        ".#...##.#.",
+        ".####...#.",
+        ".#.##...#.",
+        ".#.#.##.#.",
+        ".#..##.##.",
+        ".##..####.",
+        ".########.",
+        ".........."
+      ]
+    },
+    {
+      "id": 4,
+      "body_file": "link_tag36h11_004_body.stl",
+      "insert_file": "link_tag36h11_004_insert.stl",
+      "bitmap": [
+        "..........",
+        ".########.",
+        ".#...#.##.",
+        ".#....###.",
+        ".#.#....#.",
+        ".###.#.##.",
+        ".#.######.",
+        ".#.###.##.",
+        ".########.",
+        ".........."
+      ]
+    },
+    {
+      "id": 5,
+      "body_file": "link_tag36h11_005_body.stl",
+      "insert_file": "link_tag36h11_005_insert.stl",
+      "bitmap": [
+        "..........",
+        ".########.",
+        ".#....###.",
+        ".#..###.#.",
+        ".#..#..##.",
+        ".#.#.#..#.",
+        ".###...##.",
+        ".#.#..###.",
+        ".########.",
+        ".........."
+      ]
+    },
+    {
+      "id": 6,
+      "body_file": "link_tag36h11_006_body.stl",
+      "insert_file": "link_tag36h11_006_insert.stl",
+      "bitmap": [
+        "..........",
+        ".########.",
+        ".######.#.",
+        ".##.#..##.",
+        ".#.#.##.#.",
+        ".##...#.#.",
+        ".#####.##.",
+        ".####.#.#.",
+        ".########.",
+        ".........."
+      ]
+    },
+    {
+      "id": 7,
+      "body_file": "link_tag36h11_007_body.stl",
+      "insert_file": "link_tag36h11_007_insert.stl",
+      "bitmap": [
+        "..........",
+        ".########.",
+        ".####.###.",
+        ".####..##.",
+        ".##.#.###.",
+        ".#.#...##.",
+        ".####...#.",
+        ".##.#.###.",
+        ".########.",
+        ".........."
+      ]
+    }
+  ],
+  "verification": {
+    "verified_at": "2026-09-19T04:01:27+00:00",
+    "method": "insert STL rasterized from the tag face, decoded with pupil-apriltags",
+    "all_ok": true,
+    "results": [
+      {
+        "id": 0,
+        "decoded_ids": [
+          0
+        ],
+        "ok": true,
+        "decision_margin": 120.0
+      },
+      {
+        "id": 1,
+        "decoded_ids": [
+          1
+        ],
+        "ok": true,
+        "decision_margin": 120.0
+      },
+      {
+        "id": 2,
+        "decoded_ids": [
+          2
+        ],
+        "ok": true,
+        "decision_margin": 119.0
+      },
+      {
+        "id": 3,
+        "decoded_ids": [
+          3
+        ],
+        "ok": true,
+        "decision_margin": 120.4
+      },
+      {
+        "id": 4,
+        "decoded_ids": [
+          4
+        ],
+        "ok": true,
+        "decision_margin": 120.8
+      },
+      {
+        "id": 5,
+        "decoded_ids": [
+          5
+        ],
+        "ok": true,
+        "decision_margin": 119.5
+      },
+      {
+        "id": 6,
+        "decoded_ids": [
+          6
+        ],
+        "ok": true,
+        "decision_margin": 119.0
+      },
+      {
+        "id": 7,
+        "decoded_ids": [
+          7
+        ],
+        "ok": true,
+        "decision_margin": 119.0
+      }
+    ]
+  }
+}

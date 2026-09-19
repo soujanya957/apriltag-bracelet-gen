@@ -10,6 +10,16 @@ Built for wrist-worn fiducial tracking (e.g. anchoring egocentric-video hand
 pose to a known reference frame for imitation-learning data collection), but
 nothing here is specific to that use case.
 
+![tag link next to an unmodified spacer link, seen from the tag face](examples/preview_tag_face.png)
+
+*Left: generated tag link (tag36h11 id 0) -- light body with the black insert
+sitting flush in its pockets. Right: the unmodified carrier, exported as the
+spacer. Both joint ends are identical, so they snap together.*
+
+`examples/` has this link's `_body.stl` + `_insert.stl` and its
+`metadata.json` if you want to try the print workflow before installing
+anything.
+
 ## How it works
 
 1. You give it a carrier STEP file and a `CarrierProfile` (a small JSON
@@ -62,9 +72,16 @@ your flat spine. Pick `x_cut_left` / `x_cut_right` safely inside that run
   "spine_y_max": 12.0,
   "spine_z_min": -6.0,
   "spine_z_max": 0.0,
-  "solid_index": 0
+  "solid_index": 0,
+  "tag_face": "z_min"
 }
 ```
+
+`tag_face` (`z_max` or `z_min`) says which spine face ends up facing outward
+once links are snapped into a curved loop. That isn't derivable from the
+STEP file alone -- print one link, and if the tag ends up on the inside,
+flip it. (For `chainlink_v10` it's `z_min`.) `--tag-face` on the CLI
+overrides it for a single run.
 
 `carriers/chainlink_v10.profile.json` in this repo is a working example --
 it's calibrated for the free "Chain Link Bracelet" snap-link design (a
@@ -84,14 +101,21 @@ python3 -m link_gen.cli generate \
   --carrier carriers/your_link.step \
   --profile carriers/your_link.profile.json \
   --family tag36h11 \
-  --ids "0-7" \
-  --tag-size 16 \
-  --extra-length 11 \
-  --pocket-depth 0.4 \
-  --out-dir outputs/left_wrist
+  --wrist both
 ```
 
-- `--ids` accepts a range (`0-7`), a comma list (`0,2,5`), or a single id.
+That writes `outputs/left_wrist/` (ids 0-7), `outputs/right_wrist/`
+(ids 20-27), and `outputs/spacer_<carrier>.stl` -- the unmodified carrier
+link, exported once per run, so you can print the plain links that go
+between tag links from the same folder. All options:
+
+- `--wrist left|right|both` (default `both`). Each wrist gets its own
+  folder under `--out-dir` with its own `manifest.csv` + `metadata.json`.
+- `--ids` overrides the left wrist's ids (or the single wrist's), and
+  `--right-ids` the right wrist's. Both accept a range (`0-7`), a comma
+  list (`0,2,5`), or a single id.
+- `--tag-size 16`, `--extra-length 11`, `--pocket-depth 0.4`,
+  `--tag-face z_max|z_min`, `--out-dir outputs` -- see below.
 - `--tag-size` is the full tag footprint in mm, quiet zone included --
   must fit within `spine_len + extra_length` and within `spine_width`.
 - `--extra-length` is how much longer the spine gets vs. the carrier's
@@ -101,6 +125,16 @@ python3 -m link_gen.cli generate \
 - `--pocket-depth` controls how deep the tag geometry is recessed/raised;
   0.3-0.5mm is a reasonable range for a 0.4mm nozzle.
 
+Verify the outputs decode (optional, but worth doing once per new
+carrier/profile -- it catches mirroring or module-size mistakes before you
+print). Rasterizes each insert as seen from the printed face and runs a real
+AprilTag detector on it:
+
+```
+pip install pupil-apriltags opencv-python-headless trimesh
+python3 -m link_gen.verify outputs/left_wrist
+```
+
 List supported families:
 
 ```
@@ -108,7 +142,22 @@ python3 -m link_gen.cli families
 ```
 
 Output per id: `link_<family>_<id>_body.stl`, `link_<family>_<id>_insert.stl`,
-plus a `manifest.csv` in the output directory.
+plus `manifest.csv` and `metadata.json` in each wrist folder.
+
+### metadata.json
+
+Everything another machine needs to reproduce or detect the set:
+
+- `generator`: git commit and the exact command line.
+- `carrier` / `link_geometry_mm`: the profile and sizes that were used,
+  plus `spacer_file` pointing at the plain-link STL.
+- `detection`: family, ids, and **`pose_tag_size_mm`** -- the black border
+  square's side length (12.8mm for a 16mm tag36h11), which is what a pose
+  estimator wants, not the 16mm footprint. Includes ready-to-paste config
+  for `pupil-apriltags`, `apriltag_ros` and OpenCV ArUco.
+- `tags[].bitmap`: the exact 10x10 pattern cut for each id, row 0 = top as
+  a camera sees it.
+- `verification`: added by `link_gen.verify` -- per-id decode result.
 
 ## Printing (Bambu Studio / any AMS-capable slicer)
 
@@ -146,7 +195,10 @@ link_gen/
   geometry.py         # CarrierProfile + the actual cut/stretch/pocket CAD logic
   profile_finder.py   # scans a new carrier STEP to help calibrate a profile
   cli.py              # `generate` / `families` commands
+  verify.py           # decodes generated inserts with a real detector
 carriers/
   *.profile.json       # calibration data (safe to commit)
   *.step                # your own carrier files (gitignored)
+examples/              # one generated link (id 0) + its metadata + the preview above
+outputs/               # generated sets (gitignored)
 ```

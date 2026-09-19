@@ -7,3 +7,5 @@ outputs/
 # Printables/Thingiverse) -- don't accidentally commit one.
 carriers/*.step
 carriers/*.stp
+.venv/
+.DS_Store
